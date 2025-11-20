@@ -1,0 +1,15 @@
+{
+  "title": "Window Functions",
+  "slug": "window-functions",
+  "icon": "🪟",
+  "category": "Advanced",
+  "description": "ROW_NUMBER, RANK, and partitioning",
+  "code": "import io.exoquery.*\nimport kotlinx.serialization.Serializable\nimport kotlinx.serialization.SerialName\n\n@Serializable\ndata class Sale(\n    val id: Int,\n    @SerialName(\"product_name\") val productName: String,\n    val amount: Int,\n    val region: String\n)\n\n@Serializable\ndata class RankedSale(\n    val productName: String,\n    val amount: Int,\n    val region: String,\n    val rank: Int\n)\n\n//sampleStart\nval rankedSales = sql.select {\n    val s = from(Table<Sale>())\n    RankedSale(\n        productName = s.productName,\n        amount = s.amount,\n        region = s.region,\n        rank = rowNumber().over { \n            partitionBy(s.region)\n            orderBy(s.amount.desc())\n        }\n    )\n}\n//sampleEnd\n\nfun main(): Unit = rankedSales.buildPrettyFor.Postgres().runSample()",
+  "output": "SELECT\n  s.product_name AS productName,\n  s.amount,\n  s.region,\n  ROW_NUMBER() OVER (\n    PARTITION BY s.region\n    ORDER BY s.amount DESC\n  ) AS rank\nFROM\n  Sale s",
+  "schema": "CREATE TABLE Sale (id SERIAL PRIMARY KEY, product_name VARCHAR(100), amount INT, region VARCHAR(50));\n\nINSERT INTO Sale (product_name, amount, region) VALUES\n  ('Lunar Boots', 1500, 'North'),\n  ('Solar Panel', 3000, 'North'),\n  ('Space Suit', 2500, 'South'),\n  ('Oxygen Tank', 1200, 'South'),\n  ('Lunar Boots', 1800, 'South');",
+  "try": [
+    "Try using `RANK()` instead of `ROW_NUMBER()` to see ties",
+    "Add multiple columns to `partitionBy` for finer grouping",
+    "Try `LAG()` or `LEAD()` to compare with previous/next rows"
+  ]
+}

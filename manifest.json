@@ -1,0 +1,35 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2025-11-20T22:16:22.777Z",
+  "count": 4,
+  "examples": {
+    "advanced-subqueries": {
+      "title": "Advanced Subqueries",
+      "description": "Using subqueries for complex filtering",
+      "category": "Advanced",
+      "icon": "🔍",
+      "path": "examples/advanced-subqueries.json"
+    },
+    "json-operations": {
+      "title": "JSON Operations",
+      "description": "Working with JSON columns in PostgreSQL",
+      "category": "Advanced",
+      "icon": "📦",
+      "path": "examples/json-operations.json"
+    },
+    "recursive-cte": {
+      "title": "Recursive CTEs",
+      "description": "Hierarchical data with recursive queries",
+      "category": "Advanced",
+      "icon": "🔄",
+      "path": "examples/recursive-cte.json"
+    },
+    "window-functions": {
+      "title": "Window Functions",
+      "description": "ROW_NUMBER, RANK, and partitioning",
+      "category": "Advanced",
+      "icon": "🪟",
+      "path": "examples/window-functions.json"
+    }
+  }
+}

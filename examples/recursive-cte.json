@@ -1,0 +1,15 @@
+{
+  "title": "Recursive CTEs",
+  "slug": "recursive-cte",
+  "icon": "🔄",
+  "category": "Advanced",
+  "description": "Hierarchical data with recursive queries",
+  "code": "import io.exoquery.*\nimport kotlinx.serialization.Serializable\nimport kotlinx.serialization.SerialName\n\n@Serializable\ndata class Employee(\n    val id: Int,\n    val name: String,\n    @SerialName(\"manager_id\") val managerId: Int?\n)\n\n@Serializable\ndata class EmployeeHierarchy(\n    val id: Int,\n    val name: String,\n    val level: Int\n)\n\n//sampleStart\nval hierarchy = sql {\n    with {\n        recursive(\"employee_tree\") {\n            // Base case: top-level employees\n            sql.select {\n                val e = from(Table<Employee>())\n                where { e.managerId.isNull() }\n                EmployeeHierarchy(\n                    id = e.id,\n                    name = e.name,\n                    level = 1\n                )\n            }\n            unionAll {\n                // Recursive case: employees with managers\n                sql.select {\n                    val e = from(Table<Employee>())\n                    val tree = from(cte<EmployeeHierarchy>(\"employee_tree\"))\n                    where { e.managerId == tree.id }\n                    EmployeeHierarchy(\n                        id = e.id,\n                        name = e.name,\n                        level = tree.level + 1\n                    )\n                }\n            }\n        }\n    }\n    from(cte<EmployeeHierarchy>(\"employee_tree\"))\n}\n//sampleEnd\n\nfun main(): Unit = hierarchy.buildPrettyFor.Postgres().runSample()",
+  "output": "WITH RECURSIVE employee_tree AS (\n  SELECT\n    e.id,\n    e.name,\n    1 AS level\n  FROM\n    Employee e\n  WHERE\n    e.manager_id IS NULL\n  \n  UNION ALL\n  \n  SELECT\n    e.id,\n    e.name,\n    tree.level + 1 AS level\n  FROM\n    Employee e\n    INNER JOIN employee_tree tree ON e.manager_id = tree.id\n)\nSELECT\n  employee_tree.id,\n  employee_tree.name,\n  employee_tree.level\nFROM\n  employee_tree",
+  "schema": "CREATE TABLE Employee (id INT PRIMARY KEY, name VARCHAR(100), manager_id INT);\n\nINSERT INTO Employee (id, name, manager_id) VALUES\n  (1, 'Commander Chen', NULL),\n  (2, 'Lt. Rodriguez', 1),\n  (3, 'Lt. Kim', 1),\n  (4, 'Eng. Patel', 2),\n  (5, 'Eng. Johnson', 2),\n  (6, 'Sci. Lee', 3);",
+  "try": [
+    "Try adding a path column to track the full hierarchy chain",
+    "Add a depth limit with a WHERE clause in the recursive part",
+    "Try using this pattern for bill-of-materials or category trees"
+  ]
+}

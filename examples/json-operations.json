@@ -1,0 +1,15 @@
+{
+  "title": "JSON Operations",
+  "slug": "json-operations",
+  "icon": "📦",
+  "category": "Advanced",
+  "description": "Working with JSON columns in PostgreSQL",
+  "code": "import io.exoquery.*\nimport kotlinx.serialization.Serializable\n\n@Serializable\ndata class Document(\n    val id: Int,\n    val title: String,\n    val metadata: String // JSON column\n)\n\n//sampleStart\nval documentsWithTag = sql.select {\n    val d = from(Table<Document>())\n    // Access JSON field using ->> operator\n    where { jsonExtractText(d.metadata, \"tags\") like \"%urgent%\" }\n    d\n}\n//sampleEnd\n\nfun main(): Unit = documentsWithTag.buildPrettyFor.Postgres().runSample()",
+  "output": "SELECT\n  d.id,\n  d.title,\n  d.metadata\nFROM\n  Document d\nWHERE\n  d.metadata->>'tags' LIKE '%urgent%'",
+  "schema": "CREATE TABLE Document (\n    id SERIAL PRIMARY KEY, \n    title VARCHAR(200), \n    metadata JSONB\n);\n\nINSERT INTO Document (title, metadata) VALUES\n  ('Mission Report', '{\"tags\": \"urgent,classified\", \"author\": \"Commander\"}'),\n  ('Supply List', '{\"tags\": \"routine\", \"author\": \"Quartermaster\"}'),\n  ('Emergency Protocol', '{\"tags\": \"urgent,critical\", \"author\": \"Safety Officer\"}');",
+  "try": [
+    "Try extracting nested JSON values with multiple field paths",
+    "Use `jsonb_array_elements` to expand JSON arrays",
+    "Try `@>` containment operator for complex JSON queries"
+  ]
+}
