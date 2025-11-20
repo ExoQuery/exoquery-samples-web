@@ -1,0 +1,29 @@
+{
+  "name": "exoquery-examples-web",
+  "version": "1.0.0",
+  "description": "External examples repository for ExoQuery website",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && node dist/build-examples.js",
+    "build-examples": "tsc && node dist/build-examples.js",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "exoquery",
+    "examples",
+    "kotlin",
+    "sql"
+  ],
+  "author": "ExoQuery Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+

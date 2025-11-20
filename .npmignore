@@ -1,0 +1,17 @@
+# Source files
+src/
+tsconfig.json
+
+# Examples (keep only dist)
+examples/
+
+# Development
+.github/
+.gitignore
+*.md
+!README.md
+
+# IDE
+.vscode/
+.idea/
+

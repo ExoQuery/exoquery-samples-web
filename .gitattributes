@@ -1,0 +1,13 @@
+# Line endings
+* text=auto
+*.sh text eol=lf
+
+# TypeScript
+*.ts linguist-language=TypeScript
+
+# Markdown
+*.md linguist-documentation
+
+# JSON
+*.json linguist-generated=false
+
